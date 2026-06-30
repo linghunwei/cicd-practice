@@ -1,0 +1,39 @@
+# nema: Hello Github Action
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   say-hello:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: 打招呼
+#         run: echo "Hello Github Action!"
+#       - name: 顯示目前時間
+#         run: date
+#       - name: 顯示系統資訊
+#         run: uname -a
+
+
+
+name: Hello GitHub Actions
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 打招呼
+        run: echo "Hello GitHub Actions!"
+      - name: 顯示目前時間
+        run: date
+      - name: 顯示系統資訊
+        run: |
+          uname -a
+          pwd
