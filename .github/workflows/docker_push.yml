@@ -1,0 +1,40 @@
+name: basic flask
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  flask-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 拉取程式碼
+        uses: actions/checkout@v4
+
+      - name: 安裝 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 安裝套件
+        run: pip install -r requirements.txt
+
+      - name: 執行測試
+        run: python -m pytest -v
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: flask-test
+    env:
+      IMAGE_NAME: $({secrets.DOCKERHUB_USERNAME})/my-flask-image
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t $IMAGE_NAME:latest .
+      - run: docker run -d --name app -p 5000:5000 $IMAGE_NAME:latest && sleep 5 && curl http://127.0.0.1:5000/health
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - run: docker push $IMAGE_NAME:latest
